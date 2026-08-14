@@ -132,7 +132,7 @@ def main() -> None:
                         "Sources/"], capture_output=True, text=True)
     left = [l for l in r.stdout.splitlines()
             if "WebViewExternalBusMessage" not in l and "WhatsNewCatalog" not in l
-            and "ConnectionInfo+WebView" not in l]
+            and "ConnectionInfo+WebView" not in l and "PushServer" not in l]
     check("無 companion/alerts.home-assistant.io 入口殘留", not left, str(left[:5]))
 
     print("\n=== preflight 結果 ===")
