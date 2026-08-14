@@ -73,6 +73,7 @@ must_sed "$XCC" "s|^PRODUCT_NAME = HomeAssistant-\$(TARGET_NAME)\$|PRODUCT_NAME 
 
 # WatchApp companion ID（Info.plist 內硬編碼拼接）
 must_sed Sources/WatchApp/Info.plist 's|\$(BUNDLE_ID_PREFIX)\.HomeAssistant\$(BUNDLE_ID_SUFFIX)|$(BUNDLE_ID_PREFIX).'"${BUNDLE_ID_BASE}"'$(BUNDLE_ID_SUFFIX)|' "WKCompanionAppBundleIdentifier"
+must_sed Sources/Extensions/Watch/Resources/Info.plist 's|\$(BUNDLE_ID_PREFIX)\.HomeAssistant\$(BUNDLE_ID_SUFFIX)|$(BUNDLE_ID_PREFIX).'"${BUNDLE_ID_BASE}"'$(BUNDLE_ID_SUFFIX)|' "WKAppBundleIdentifier (watch ext)"
 # LocalPushEvent / PushServer 硬編碼 app_id（推播本期不做,仍保持一致）
 must_sed Sources/Shared/Notifications/LocalPush/LocalPushEvent.swift "s|io\.robbie\.HomeAssistant|${BUNDLE_ID_PREFIX}.${BUNDLE_ID_BASE}|g" "LocalPushEvent app_id"
 sedi "s|io\.robbie\.HomeAssistant|${BUNDLE_ID_PREFIX}.${BUNDLE_ID_BASE}|g" Sources/PushServer/Sources/App/routes.swift || true

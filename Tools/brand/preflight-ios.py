@@ -119,6 +119,11 @@ def main() -> None:
     for p in ("Sources/WatchApp/Info.plist", "Sources/Extensions/Share/Resources/Info.plist"):
         check(f"顯示名 {p}", app in read(p) and ">Home Assistant<" not in read(p))
 
+    # 9.5 plist 拼接殘留(WKAppBundleIdentifier 事故的迴歸檢查;GoogleService 為刻意保留)
+    r = subprocess.run(["grep", "-rln", "--include=*.plist", ".HomeAssistant$(BUNDLE_ID_SUFFIX)", "Sources/"],
+                       capture_output=True, text=True)
+    check("plist 無 .HomeAssistant 拼接殘留", not r.stdout.strip(), r.stdout.strip()[:200])
+
     # 10. 授權合規
     check("LICENSE.md 保留", os.path.exists("LICENSE.md"))
 
