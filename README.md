@@ -1,138 +1,143 @@
-Home Assistant for Apple Platforms
-=================
+<h1 align="center">woow_ha_ios</h1>
 
-[![TestFlight Beta invite](https://img.shields.io/badge/TestFlight-Beta-blue.svg)](https://www.home-assistant.io/ios/beta/)
-[![Download on the App Store](https://img.shields.io/itunes/v/1099568401.svg)](https://itunes.apple.com/app/home-assistant-open-source-home-automation/id1099568401)
-[![GitHub issues](https://img.shields.io/github/issues/home-assistant/iOS.svg?style=flat)](https://github.com/home-assistant/iOS/issues)
-[![License Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green.svg?style=flat)](https://github.com/home-assistant/iOS/blob/master/LICENSE)
+<p align="center">
+  <strong>Woow base fork of <a href="https://github.com/home-assistant/iOS">home-assistant/iOS</a> + white-label rebrand toolkit</strong><br/>
+  Pinned upstream, scripted branding, preflight-gated — seed once per brand, rebrand in one run
+</p>
 
-## Getting Started
+<p align="center">
+  <a href="#what-this-repo-is">About</a> &bull;
+  <a href="#topology">Topology</a> &bull;
+  <a href="#the-rebrand-toolkit">Toolkit</a> &bull;
+  <a href="#usage-new-brand">Usage</a> &bull;
+  <a href="#local-build-environment">Environment</a> &bull;
+  <a href="#upstream-policy">Upstream policy</a> &bull;
+  <a href="README_zh-TW.md">中文文件</a>
+</p>
 
-Home Assistant uses Bundler, Homebrew, Cocoapods and SPM to manage build dependencies. You'll need Xcode 26.4 (or later) which you can download from the [App Store](https://developer.apple.com/download/). You can get the app running using the following commands:
+<p align="center">
+  <img src="https://img.shields.io/badge/Upstream%20pin-release%2F2026.7.3%2F2026.2546-purple" alt="pin"/>
+  <img src="https://img.shields.io/badge/Xcode-26.6-blue?logo=xcode" alt="Xcode"/>
+  <img src="https://img.shields.io/badge/Preflight-66%20gates-brightgreen" alt="preflight"/>
+  <img src="https://img.shields.io/badge/License-Apache%202.0-green" alt="license"/>
+</p>
 
-```bash
-git clone https://github.com/home-assistant/iOS.git
-cd iOS
+---
 
-# you must do one of the following, but you do not need to do all of them:
+## What this repo is
 
-## install cocoapods via homebrew, use that
-brew install cocoapods
-$(brew --prefix)/opt/ruby/bin/gem install cocoapods-acknowledgements
-pod install --repo-update
+This is the **shared base** for Woow's white-label iOS builds of the Home Assistant
+Companion app. It is upstream code pinned at tag `release/2026.7.3/2026.2546`
+(commit `70e675a8`, the 2026-08-04 App Store release), **unbranded**, plus:
 
-## install ruby via homebrew, use that
-brew install ruby@3.1
-$(brew --prefix)/opt/ruby@3.1/bin/bundle install
-$(brew --prefix)/opt/ruby@3.1/bin/bundle exec pod install --repo-update
+- `Tools/brand/` — the complete rebrand toolkit (script, string engine, icon
+  pipeline, 66-gate preflight, line-verified replacement inventory)
+- `docs/` — fork-divergence ledger, environment trap notes, per-brand reuse guides
 
-## install ruby via rbenv, use that
-brew install rbenv ruby-build
-rbenv install
-bundle install
-bundle exec pod install --repo-update
+Brand repos are seeded **from here** with full git history, then branded by one
+scripted run. First production brand:
+[`Woow_simon_ha_ios`](https://github.com/WOOWTECH/Woow_simon_ha_ios)
+(`com.simon.home`, simulator-verified against a live HA 2026.4.2 server).
 
-## install ruby via mise, use that
-brew install mise
-mise install
-bundle install
-bundle exec pod install --repo-update
+## Topology
+
+```mermaid
+flowchart TB
+    UP["home-assistant/iOS<br/>(upstream)"] -- "pin tag<br/>release/2026.7.3/2026.2546" --> BASE["<b>woow_ha_ios</b> (this repo)<br/>unbranded + Tools/brand/"]
+    BASE -- "seed: clone with full history<br/>+ disable CI (commit #1)<br/>+ rebrand-ios.sh (commit #2)" --> SIMON["Woow_simon_ha_ios<br/>com.simon.home"]
+    BASE -- "same flow, apporo-ios.conf" --> APPORO["Woow_apporo_ha_ios<br/>(future)"]
 ```
 
-Once this completes, you can launch  `HomeAssistant.xcworkspace` and run the `App-Debug` scheme onto your simulator or iOS device.
+Rules (mirroring the Android `Woow_simon_ha_app` conventions):
 
-## Testing just the frontend
+- No merges/cherry-picks between base and brand repos — shared changes flow **down**
+  from the base (re-seed or manual pick)
+- Never seed a new brand from an already-branded tree (the script's keywords are gone)
+- Never rename Swift modules, targets, or `HomeAssistant.xcodeproj` itself (keeps
+  future upstream picks reviewable)
+- The rebrand script is **one-shot**: to change parameters,
+  `git reset --hard pre-rebrand` and run again
 
-To just test the [frontend](https://github.com/home-assistant/frontend), you can use a simulator version built by our GitHub actions.
+## The Rebrand Toolkit
 
-1. Install Xcode from the [App Store](https://developer.apple.com/download/) making sure it's at least the version noted above. You do not need to install or run anything else.
-2. Launch the simulator at `/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app` or in Xcode under the Xcode menu > Open Developer Tool.
-3. Open a simulator under File > Open Simulator. You can install older versions of iOS in Xcode's Components preferences.
-4. Download a simulator build from the [the GitHub action](https://github.com/home-assistant/iOS/actions/workflows/ci.yml?query=branch%3Amaster) under "Artifacts."
-5. Drag the result `.app` on drop it on top of the simulator.
-6. Locate the app on the home screen and click it to launch.
-
-The simulator behaves different than you might expect:
-
-| Action | Effect |
-| -- | -- |
-| Click | Tap |
-| Click & drag | Scroll |
-| Hold ⌥ | Add a second touch point |
-| Hold ⇧⌥ | Move both touch points |
-| ⌘←, ⌘→ | Rotate |
-| ⌘S | Take screenshot |
-| ⌘R | Record video |
-| ⌘K | Toggle software keyboard |
-
-You can now debug the WebView in this simulator build using Safari's Web Inspector:
-
-1. Make sure "Show Develop menu in menu bar" is enabled in Safari's Advanced preferences.
-2. Under the Develop menu, expand the "Simulator" menu for the simulator you've opened.
-3. Choose the WebView you want to inspect. A new window will open.
-
-## Code Signing
-
-Although the app is set up to use Automatic provisioning for Debug builds, you'll need to customize a few of the options. This is because the app makes heavy use of entitlements that require code signing, even for simulator builds.
-
-Edit the file `Configuration/HomeAssistant.overrides.xcconfig` (which will not exist by default and is ignored by git) and add the following:
-
-```bash
-DEVELOPMENT_TEAM = YourTeamID
-BUNDLE_ID_PREFIX = some.bundle.prefix
+```mermaid
+flowchart LR
+    INV["rebrand-inventory.md<br/>line-verified replacement map<br/>(8-way source sweep)"] -.grounds.-> SH
+    CONF["&lt;brand&gt;-ios.conf"] --> SH["rebrand-ios.sh<br/>10 staged steps, fail-fast<br/>(must_sed md5 guards)"]
+    SH --> S1["Brand.xcconfig +<br/>bundle-ID concat rule"]
+    SH --> S2["entitlements dual-track<br/>dev (free-team) / release"]
+    SH --> S3["OAuth constants +<br/>URL scheme sweep"]
+    SH --> S4["replace_strings.py<br/>34 locales · whitelists ·<br/>format-specifier parity"]
+    SH --> S5["gen_icons.py + icon_tool.swift<br/>flatten alpha, all iconsets"]
+    S1 & S2 & S3 & S4 & S5 --> PF["preflight-ios.py<br/>66 pass/fail gates"]
 ```
 
-Xcode should generate provisioning profiles in your Team ID and our configuration will disable features your team doesn't have like Critical Alerts. You can find your Team ID on Apple's [developer portal](https://developer.apple.com/account); it looks something like `ABCDEFG123`.
+| File | Role |
+|---|---|
+| `Tools/brand/rebrand-ios.sh` | Orchestrator — every substitution guarded by an md5 "must-change" check; dies loudly on pattern drift |
+| `Tools/brand/simon-ios.conf` | Brand parameter file (copy per brand) |
+| `Tools/brand/replace_strings.py` | Localization engine: full-text entry parser (multi-line values), key/value whitelists (Nabu Casa, mDNS placeholders), `%@` format-specifier parity check, `plutil -lint` gate |
+| `Tools/brand/gen_icons.py` + `icon_tool.swift` | CoreGraphics icon pipeline — flattens alpha onto brand color, regenerates every `.appiconset`/logo imageset incl. alternate-icon previews; no ImageMagick needed |
+| `Tools/brand/preflight-ios.py` | 66 checks: OAuth constants, scheme residue, bundle-ID concat in xcconfig/entitlements/plists, dual-track wiring, icon alpha, brand colors, entry-link residue, Lokalise-workflow safety net |
+| `Tools/brand/rebrand-inventory.md` | Ground truth: what to replace/keep/decide, file:line, produced by 8 parallel scouts against the pinned tree |
+| `Tools/brand/android-reference/` | The Android toolkit (`Woow_simon_ha_app`) kept for pattern parity |
 
-## Code style
+The toolkit survived a **5-lens adversarial review** (sed/shell semantics, cross-file
+consistency, string-engine dry runs on real locale files, icon-pipeline enumeration,
+coverage-vs-inventory audit) which caught 15 defects — including two would-be
+disasters (newline corruption across all 34 locales; a first-iconset crash that would
+have left a half-branded tree) — **before** the first real run.
 
-Linters run as part of Pull Request checks. Additionally, some linting requirements can be autocorrected.
-
-```bash
-# checks for linting problems, doesn't fix
-bundle exec fastlane lint
-# checks for linting problems and fixes them
-bundle exec fastlane autocorrect
-```
-
-In the Xcode project, the autocorrectable linters will not modify your source code but will provide warnings. This project uses several linters:
-
-- [SwiftFormat](https://github.com/nicklockwood/SwiftFormat)
-- [SwiftLint](https://github.com/realm/swiftlint) (for things SwiftFormat doesn't automate)
-- [Rubocop](https://rubocop.org) (largely for Fastlane)
-- [YamlLint](https://yamllint.readthedocs.io/en/stable/index.html) (largely for GitHub Actions)
-
-## Continuous Integration
-
-We use [Github Actions](https://github.com/home-assistant/iOS/actions) alongside [Fastlane](https://fastlane.tools/) to perform continuous integration both by unit testing and deploying to [App Store Connect](https://appstoreconnect.apple.com). Mac Developer ID builds are available as an artifact on every build of master.
-
-### Environment variables
-
-Fastlane scripts read from the environment or `.env` file for configuration like team IDs. See [`.env.sample`](https://github.com/home-assistant/iOS/blob/master/.env.sample) for available values.
-
-### Deployment
-
-Although all the deployment is done through Github Actions, you can do it manually through [Fastlane](https://github.com/home-assistant/iOS/blob/master/fastlane/README.md):
-
-### Deployment to App Store Connect
+## Usage (new brand)
 
 ```bash
-# creates the builds and uploads to the app store
-# each save their artifacts to build/
-bundle exec fastlane mac build
-bundle exec fastlane ios build
+# 1. seed
+git clone <this repo> Woow_<brand>_ha_ios && cd Woow_<brand>_ha_ios
+git remote rename origin base
+git rm -rq .github/workflows && git commit -m "ci: disable upstream workflows"
+git tag pre-rebrand
+
+# 2. configure + run
+cp Tools/brand/simon-ios.conf Tools/brand/<brand>-ios.conf   # edit parameters
+bash Tools/brand/rebrand-ios.sh Tools/brand/<brand>-ios.conf
+python3 Tools/brand/preflight-ios.py Tools/brand/<brand>-ios.conf   # must be all green
+
+# 3. build
+pod install
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
+xcodebuild -workspace HomeAssistant.xcworkspace -scheme App-Debug \
+  -destination 'platform=iOS Simulator,name=iPhone 17' build
 ```
 
-## Contributing
+**Before running**: the brand's OAuth `client_id` page must already be live and
+declare `<scheme>://auth-callback` (IndieAuth) — otherwise sign-in breaks against
+every standard HA server. Full checklist: [`docs/apporo-reuse.md`](docs/apporo-reuse.md).
 
-See [CONTRIBUTING.md](CONTRIBUTING.md)
+## Local Build Environment
 
-## LICENSE
+Hard-won environment notes for this pinned tag (details in
+[`docs/fork-divergence.md`](docs/fork-divergence.md)):
 
-Apache-2.0
+| Trap | Resolution |
+|---|---|
+| Tag still uses **CocoaPods** (upstream dropped it later) | `brew install cocoapods` + install `cocoapods-acknowledgements` into its gem home; skip bundler entirely |
+| ruby 3.1.2 (`.ruby-version`) won't compile under Xcode 26 clang | Not needed for building — Fastlane only |
+| App scheme embeds a Watch app | Download the **watchOS platform** once, or scheme validation blocks every build |
+| SwiftLint build phase hard-fails when tools missing | `brew install swiftlint swiftformat` |
+| `xcode-select` points at CLT on this machine | Prefix all commands with `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` |
+| Xcode 26.6 simulators | Use `iPhone 17` (there is no iPhone 16 runtime) |
 
-## Credits
+## Upstream Policy
 
-The format and some content of this README.md comes from the [SwipeIt](https://github.com/ivanbruel/SwipeIt) project.
+- **Pin, don't track**: no rolling merges. Review `home-assistant/iOS` releases
+  monthly and before each brand release; cherry-pick security fixes manually and
+  record them in the divergence ledger
+- **Never push upstream** from this fork family (OHF policy on autonomous-agent
+  contributions; also nothing here is upstream-relevant)
+- Apache 2.0 [`LICENSE.md`](LICENSE.md) and the in-app open-source acknowledgements
+  page are preserved in every brand build
 
-[![Home Assistant - A project from the Open Home Foundation](https://www.openhomefoundation.org/badges/home-assistant.png)](https://www.openhomefoundation.org/)
+## License
+
+Modified distribution of Home Assistant Companion for iOS, © Home Assistant
+contributors — [Apache License 2.0](LICENSE.md).
