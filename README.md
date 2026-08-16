@@ -35,9 +35,12 @@ Companion app. It is upstream code pinned at tag `release/2026.7.3/2026.2546`
 - `docs/` — fork-divergence ledger, environment trap notes, per-brand reuse guides
 
 Brand repos are seeded **from here** with full git history, then branded by one
-scripted run. First production brand:
-[`Woow_simon_ha_ios`](https://github.com/WOOWTECH/Woow_simon_ha_ios)
-(`com.simon.home`, simulator-verified against a live HA 2026.4.2 server).
+scripted run. Production brands:
+[`Woow_simon_ha_ios`](https://github.com/WOOWTECH/Woow_simon_ha_ios) (`com.simon.home`,
+simulator-verified against a live HA 2026.4.2 server),
+[`Woow_woowtech_ha_ios`](https://github.com/WOOWTECH/Woow_woowtech_ha_ios)
+(`com.woowtech.home`), and
+[`Woow_apporo_ha_ios`](https://github.com/WOOWTECH/Woow_apporo_ha_ios) (`com.apporo.home`).
 
 ## Topology
 
@@ -45,7 +48,8 @@ scripted run. First production brand:
 flowchart TB
     UP["home-assistant/iOS<br/>(upstream)"] -- "pin tag<br/>release/2026.7.3/2026.2546" --> BASE["<b>woow_ha_ios</b> (this repo)<br/>unbranded + Tools/brand/"]
     BASE -- "seed: clone with full history<br/>+ disable CI (commit #1)<br/>+ rebrand-ios.sh (commit #2)" --> SIMON["Woow_simon_ha_ios<br/>com.simon.home"]
-    BASE -- "same flow, apporo-ios.conf" --> APPORO["Woow_apporo_ha_ios<br/>(future)"]
+    BASE -- "same flow" --> WT["Woow_woowtech_ha_ios<br/>com.woowtech.home"]
+    BASE -- "same flow" --> APPORO["Woow_apporo_ha_ios<br/>com.apporo.home"]
 ```
 
 Rules (mirroring the Android `Woow_simon_ha_app` conventions):

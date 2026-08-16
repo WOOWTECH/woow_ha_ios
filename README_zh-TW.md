@@ -34,9 +34,12 @@ tag `release/2026.7.3/2026.2546`(commit `70e675a8`,2026-08-04 上架的 App Stor
   逐行查證的置換清單)
 - `docs/`——fork-divergence 帳本、環境踩雷筆記、品牌重用指南
 
-品牌 repo **從這裡**種入完整 git 歷史,再一鍵換裝。第一個量產品牌:
-[`Woow_simon_ha_ios`](https://github.com/WOOWTECH/Woow_simon_ha_ios)
-(`com.simon.home`,已對真實 HA 2026.4.2 伺服器完成模擬器驗證)。
+品牌 repo **從這裡**種入完整 git 歷史,再一鍵換裝。量產品牌:
+[`Woow_simon_ha_ios`](https://github.com/WOOWTECH/Woow_simon_ha_ios)(`com.simon.home`,
+已對真實 HA 2026.4.2 伺服器完成模擬器驗證)、
+[`Woow_woowtech_ha_ios`](https://github.com/WOOWTECH/Woow_woowtech_ha_ios)
+(`com.woowtech.home`)、
+[`Woow_apporo_ha_ios`](https://github.com/WOOWTECH/Woow_apporo_ha_ios)(`com.apporo.home`)。
 
 ## 拓撲
 
@@ -44,7 +47,8 @@ tag `release/2026.7.3/2026.2546`(commit `70e675a8`,2026-08-04 上架的 App Stor
 flowchart TB
     UP["home-assistant/iOS<br/>(上游)"] -- "pin tag<br/>release/2026.7.3/2026.2546" --> BASE["<b>woow_ha_ios</b>(本 repo)<br/>未換裝 + Tools/brand/"]
     BASE -- "種入:完整歷史 clone<br/>+ 停用 CI(第 1 顆 commit)<br/>+ rebrand-ios.sh(第 2 顆)" --> SIMON["Woow_simon_ha_ios<br/>com.simon.home"]
-    BASE -- "同流程,apporo-ios.conf" --> APPORO["Woow_apporo_ha_ios<br/>(未來)"]
+    BASE -- "同流程" --> WT["Woow_woowtech_ha_ios<br/>com.woowtech.home"]
+    BASE -- "同流程" --> APPORO["Woow_apporo_ha_ios<br/>com.apporo.home"]
 ```
 
 規則(沿用 Android `Woow_simon_ha_app` 慣例):
