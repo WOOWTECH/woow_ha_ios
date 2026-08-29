@@ -124,7 +124,7 @@ final class CarPlayAssistSession: NSObject {
             ),
             repeats: false
         )
-        idleState.actionButtons = actionButtons
+        applyActionButtons(actionButtons, to: idleState)
 
         let recordingState = CPVoiceControlState(
             identifier: VoiceControlStateID.recording.rawValue,
@@ -153,7 +153,7 @@ final class CarPlayAssistSession: NSObject {
             image: MaterialDesignIcons.alertCircleIcon.carPlayIcon(color: .systemRed, context: .assistStateIndicator),
             repeats: false
         )
-        errorState.actionButtons = actionButtons
+        applyActionButtons(actionButtons, to: errorState)
 
         return CPVoiceControlTemplate(
             voiceControlStates: [recordingState, processingState, respondingState, idleState, errorState]
@@ -316,6 +316,18 @@ final class CarPlayAssistSession: NSObject {
         ).image { _ in
             iconImage.draw(in: CGRect(origin: iconOrigin, size: iconSize))
         }
+    }
+
+    /// Assigns the action buttons to a voice control state through the Objective-C runtime.
+    ///
+    /// `CPVoiceControlState.actionButtons` is only exposed starting with the iOS 26.4 SDK, while
+    /// the project must still compile against the iOS 26.2 SDK. This session is already gated to
+    /// iOS 26.4 at runtime, where the setter exists, so the buttons are applied there; when the
+    /// selector is missing the call is a safe no-op.
+    private func applyActionButtons(_ buttons: [CPButton], to state: CPVoiceControlState) {
+        let setter = NSSelectorFromString("setActionButtons:")
+        guard state.responds(to: setter) else { return }
+        state.perform(setter, with: buttons)
     }
 
     /// Server TTS is only requested when the response is not spoken on device. `muteTTS` is

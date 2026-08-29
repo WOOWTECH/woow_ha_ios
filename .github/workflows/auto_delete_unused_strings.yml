@@ -15,6 +15,7 @@ permissions:
 jobs:
   # Detect unused L10n keys with the same script the CI unused-strings check uses.
   detect:
+    if: github.repository == 'home-assistant/iOS'
     runs-on: ubuntu-latest
     outputs:
       has_unused: ${{ steps.detect.outputs.has_unused }}

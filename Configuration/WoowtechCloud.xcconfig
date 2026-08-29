@@ -1,0 +1,6 @@
+// Cloud edition overrides, passed on the command line via `xcodebuild -xcconfig`.
+// Intentionally not referenced by project.pbxproj; the on-premise edition builds
+// without it and keeps the values from HomeAssistant.xcconfig.
+WOOW_PRODUCT_BASE = homecloud
+WOOW_DISPLAY_NAME = woowtech Home Cloud
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) CLOUD_EDITION

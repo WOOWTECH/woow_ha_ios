@@ -13,7 +13,7 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.$(BUNDLE_ID_PREFIX).homeassistant$(BUNDLE_ID_SUFFIX)</string>
+		<string>group.$(BUNDLE_ID_PREFIX).$(WOOW_PRODUCT_BASE)$(BUNDLE_ID_SUFFIX)</string>
 	</array>
 	<key>com.apple.security.network.client</key>
 	<true/>
