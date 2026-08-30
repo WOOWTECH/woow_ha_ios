@@ -120,3 +120,8 @@ entry uses), so login, device naming, permissions and completion are unchanged u
   bootstrap). Upstream never hits it because their entitlement always resolves. Practical rule:
   **never pass `CODE_SIGNING_ALLOWED=NO` to simulator *test* runs** (it strips entitlements and
   triggers the fallback); build-only lanes may keep it. Candidate for an upstream issue/PR.
+- **`Woowtech.strings` must exist in every `.lproj`.** Upstream's `LocalizedStrings.testLanguages`
+  enumerates each strings table found in `en.lproj` and requires it in every language directory of
+  the bundle. Only `en` and `zh-Hant` carry real content; the other 33 are byte copies of `en`
+  (fallback). When the nightly Lokalise sync introduces a **new language directory**, copy
+  `en.lproj/Woowtech.strings` into it or CI's test job fails on that XCTUnwrap.
