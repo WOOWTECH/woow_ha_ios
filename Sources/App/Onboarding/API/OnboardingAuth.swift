@@ -57,6 +57,24 @@ class OnboardingAuth {
                 // session doesn't keep two.
                 api.connection.disconnect()
                 Current.setCachedApi(HomeAssistantAPI(server: server), for: server.identifier)
+            }.then { server -> Promise<Server> in
+                // Fork hook (PRD §3.2): let the edition react to the persisted server before
+                // `.complete` declares success — a thrown error still lands in the recover below,
+                // so the registration is rolled back (token revoked, server removed) instead of
+                // succeeding in the UI and reverting afterwards. Bridged as a promise on purpose:
+                // starting a bare Task inside `.get`/`.done` would evaporate the throw and the
+                // rollback would never trigger.
+                guard let onServerRegistered = Current.onServerRegistered else { return .value(server) }
+                return Promise { seal in
+                    Task {
+                        do {
+                            try await onServerRegistered(server)
+                            seal.fulfill(server)
+                        } catch {
+                            seal.reject(error)
+                        }
+                    }
+                }
             }.then { server in
                 steps(.complete).map { server }
             }.recover(policy: .allErrors) { [self] error -> Promise<Server> in

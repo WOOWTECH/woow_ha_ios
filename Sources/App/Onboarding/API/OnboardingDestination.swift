@@ -14,12 +14,25 @@ enum OnboardingDestination: Hashable {
     case clientCertificate(OnboardingClientCertificateRequest)
     /// The connection-error details. Only used on Mac Catalyst, for the same reason as above.
     case connectionError(OnboardingConnectionErrorContext)
+    #if CLOUD_EDITION
+    /// Cloud edition: the unchanged upstream welcome screen, pushed from the chooser's local choice.
+    case welcome
+    /// Cloud edition: the WOOW PaaS device-flow sign-in screen; the view model carries the attempt.
+    case cloudSignIn(DeviceFlowViewModel)
+    /// Cloud edition: the provisioning screen; carries the view model holding the signed-in session.
+    case cloudProvision(DeviceFlowViewModel)
+    #endif
 
     /// Whether this page belongs to the auth flow (everything after the user picked a server).
     var isAuthFlowStep: Bool {
         switch self {
         case .serversList, .connectionError: return false
         case .login, .deviceName, .permissions, .clientCertificate: return true
+        #if CLOUD_EDITION
+        // The cloud pages sit before (or around) the auth flow: a failed authentication pops back
+        // to them, exactly like it pops back to the servers list.
+        case .welcome, .cloudSignIn, .cloudProvision: return false
+        #endif
         }
     }
 
@@ -37,6 +50,14 @@ enum OnboardingDestination: Hashable {
             return lhsRequest === rhsRequest
         case let (.connectionError(lhsContext), .connectionError(rhsContext)):
             return lhsContext === rhsContext
+        #if CLOUD_EDITION
+        case (.welcome, .welcome):
+            return true
+        case let (.cloudSignIn(lhsViewModel), .cloudSignIn(rhsViewModel)):
+            return lhsViewModel === rhsViewModel
+        case let (.cloudProvision(lhsViewModel), .cloudProvision(rhsViewModel)):
+            return lhsViewModel === rhsViewModel
+        #endif
         default:
             return false
         }
@@ -61,6 +82,16 @@ enum OnboardingDestination: Hashable {
         case let .connectionError(context):
             hasher.combine(5)
             hasher.combine(ObjectIdentifier(context))
+        #if CLOUD_EDITION
+        case .welcome:
+            hasher.combine(6)
+        case let .cloudSignIn(viewModel):
+            hasher.combine(7)
+            hasher.combine(ObjectIdentifier(viewModel))
+        case let .cloudProvision(viewModel):
+            hasher.combine(8)
+            hasher.combine(ObjectIdentifier(viewModel))
+        #endif
         }
     }
 }

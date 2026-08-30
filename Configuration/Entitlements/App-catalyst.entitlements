@@ -23,7 +23,7 @@
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)$(BUNDLE_ID_PREFIX).HomeAssistant$(BUNDLE_ID_SUFFIX)</string>
+		<string>$(AppIdentifierPrefix)$(BUNDLE_ID_PREFIX).$(WOOW_PRODUCT_BASE)$(BUNDLE_ID_SUFFIX)</string>
 	</array>
 	<key>com.apple.security.device.camera</key>
 	<true/>

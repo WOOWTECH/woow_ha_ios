@@ -1264,6 +1264,11 @@
 				Views/SafariWebView.swift,
 				Views/SearchingServersAnimationView.swift,
 				Views/ShareActivityView.swift,
+				Woowtech/CloudChooserView.swift,
+				Woowtech/CloudProvisionView.swift,
+				Woowtech/CloudSignInView.swift,
+				Woowtech/DeviceFlowViewModel.swift,
+				Woowtech/WoowtechStrings.swift,
 			);
 			target = D03D891620E0A85200D4F28D /* Shared-iOS */;
 		};
