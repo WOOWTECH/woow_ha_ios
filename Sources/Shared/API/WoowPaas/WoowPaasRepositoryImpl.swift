@@ -85,14 +85,14 @@ public final class WoowPaasRepositoryImpl: WoowPaasRepository {
 
         switch code {
         case 200, 202:
-            return ProvisionResponse(
-                status: try provisionStatus(from: dto.status, httpCode: code),
+            return try ProvisionResponse(
+                status: provisionStatus(from: dto.status, httpCode: code),
                 haUrl: apiValue(dto.haUrl)
             )
         case 409:
             // A 409 is data, not a failure: it reports an instance that is suspended or being deleted.
-            return ProvisionResponse(
-                status: try provisionStatus(from: dto.status, httpCode: code),
+            return try ProvisionResponse(
+                status: provisionStatus(from: dto.status, httpCode: code),
                 error: apiValue(dto.error)
             )
         case 403:
@@ -115,8 +115,8 @@ public final class WoowPaasRepositoryImpl: WoowPaasRepository {
         guard successfulStatusRange.contains(code) else {
             throw WoowPaasError.api(code: code, message: apiValue(dto.error) ?? "查詢狀態失敗 (HTTP \(code))")
         }
-        return StatusResponse(
-            status: try provisionStatus(from: dto.status, httpCode: code),
+        return try StatusResponse(
+            status: provisionStatus(from: dto.status, httpCode: code),
             haUrl: apiValue(dto.haUrl),
             error: apiValue(dto.error)
         )
@@ -272,13 +272,13 @@ private func deviceCodeResponse(from dto: DeviceCodeResponseDto, httpCode: Int) 
         return value
     }
 
-    return DeviceCodeResponse(
-        deviceCode: try required(dto.deviceCode),
-        userCode: try required(dto.userCode),
-        verificationUri: try required(dto.verificationUri),
-        verificationUriComplete: try required(dto.verificationUriComplete),
-        expiresIn: try required(dto.expiresIn),
-        interval: try required(dto.interval)
+    return try DeviceCodeResponse(
+        deviceCode: required(dto.deviceCode),
+        userCode: required(dto.userCode),
+        verificationUri: required(dto.verificationUri),
+        verificationUriComplete: required(dto.verificationUriComplete),
+        expiresIn: required(dto.expiresIn),
+        interval: required(dto.interval)
     )
 }
 
