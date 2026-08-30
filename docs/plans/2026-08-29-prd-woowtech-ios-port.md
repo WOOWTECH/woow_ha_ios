@@ -318,16 +318,25 @@ stg/prod 用 `#if DEBUG`，不繞 Info.plist。
 3. **公式型 bundle id 殘留**（`WKCompanionAppBundleIdentifier`＋6 entitlements 的 keychain-access-groups）——字面值掃描抓不到的第二形態；已雙掃歸零。
 4. **上游潛伏死鎖**：`AppConstants.AppGroupContainer` nil fallback 在 `AppEnvironment.init()` 重入 `Current`。規則：**模擬器測試不可帶 `CODE_SIGNING_ALLOWED=NO`**。可回報上游。
 
-### 未完成
+### Phase 3 E2E 達標（2026-08-30 15:55，Alan 實測）
 
-| 項目 | 卡點 |
-|---|---|
-| Phase 3：模擬器 E2E 打 prod（release 組態） | 進行中——release cloud build 已啟動；瀏覽器授權步驟需 Alan 的 PaaS 帳號 |
-| Fixture contract 測試啟用 | 等 Android Layer 2 錄製 PR（骨架已就位，disabled 註明原因） |
-| Phase 4：CI 雙 config matrix | 依 D1（remote repo 未定）之後 |
-| O1–O6 產品決策（§7） | 需 Alan／產品拍板 |
-| D10 帳號刪除 | 上架前必補 |
-| D1 remote repo | 四個 commit 僅存本機，儘早定 push 目的地 |
+Release cloud build（`com.woowtech.homecloud`，打 prod）在 iOS 26.3.1 模擬器全程通過：
+chooser → Device Flow（user_code `CGMZ-WQMC`，in-app Safari 授權）→ token 輪詢自動前進 →
+開通（**409 沿用既有實例** `paas-cs-8594c519`，未在 prod 留垃圾）→ 交棒上游註冊
+（mTLS 檢查 200 → connectivity → HA 登入頁）→ HA 帳號登入 → dashboard。
+與 Android 2026-08-26 的 E2E 驗證對齊。過程小插曲皆已記錄：HA 實例帳密（`alanlin`）
+與 PaaS 帳密是兩套系統，登入頁按「忘記密碼」會開外部網頁蓋掉流程——已知 UX 課題，列 O7。
+
+### 未完成（備案清單——之後的工作從這裡接）
+
+| # | 項目 | 卡點／備註 |
+|---|---|---|
+| T1 | Fixture contract 測試啟用 | 等 Android Layer 2 錄製 PR（骨架已就位，disabled 註明原因） |
+| T2 | Phase 4：CI 雙 config matrix（macOS runner） | 依 repo 決策之後 |
+| T3 | O1–O6 產品決策（§7）＋新增 **O7**：登入頁「忘記密碼」開外部網頁會蓋掉 onboarding 流程的 UX 處理 | 需 Alan／產品拍板 |
+| T4 | D10 帳號刪除（App Store 5.1.1(v) 硬條款） | 上架前必補 |
+| T5 | 實機驗證（Keychain／App Group 行為與模擬器不同）＋簽章 | 依 O5（WOOWTECH Apple Developer Team） |
+| T6 | 上游回報：`AppGroupContainer` nil fallback 的 dispatch_once 死鎖 | 見 fork-divergence「Lessons」 |
 
 ## 11. 風險
 
