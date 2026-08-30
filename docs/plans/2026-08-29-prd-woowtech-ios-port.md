@@ -298,7 +298,38 @@ stg/prod 用 `#if DEBUG`，不繞 Info.plist。
 | 3 | 模擬器 E2E 打 prod（一次性驗證，之後降 release checklist） | 開通到活的 HA 實例 |
 | 4 | CI 雙 config matrix（macOS runner，public repo 免費）；簽章／上架另案（依 O5） | PR gate 綠 |
 
-## 10. 風險
+## 10. 實作狀態記錄（2026-08-30 盤點；traceability 用，做到哪記到哪）
+
+### 已完成（branch `feature/woowtech-port`，工作樹乾淨）
+
+| 項目 | Commit | 驗證證據 |
+|---|---|---|
+| Xcode 26.3 基線相容（RectangularProgressView CGFloat 錨定） | `2cd4555e` | 上游 main 全專案編譯通過 |
+| Phase 0 品牌＋edition 基建（bundle id 公式、WoowtechCloud.xcconfig 疊加、6 workflow 守門、entitlements、build-both-editions.sh、fork-divergence.md） | `8940d9fe` | 雙 edition build 綠 |
+| Phase 0 追補：CarPlay `actionButtons`（26.4 SDK API）26.2 相容處理 | 併入 `8940d9fe` | 同上 |
+| Phase 1 WoowPaas 資料層（9 檔，語意對照 Android :cloud-data；D8 memory-only session；可注入時鐘輪詢） | `aca97141` | Poller 6＋Classifier 12 測試綠 |
+| Phase 2 三畫面＋兩 hook＋lifecycle 六條＋Woowtech.strings 雙語表 | `b37e805e` | 見下欄 |
+| **Verify B 全綠（2026-08-30 14:36）** | — | onprem build ✓／cloud build ✓（CLOUD_EDITION＋DEBUG 旗標確認）／onprem 二進位純度 CLEAN（零 woowpaas·stg·paas 字串）／新測試 23 條全綠（HookRollback 2、EditionNav 2、Shared 19 含 fixture 骨架照鐵律 skip） |
+
+### 驗證中發現並修復的雷（詳見 docs/fork-divergence.md「Lessons from verification」）
+
+1. 上游 `CPVoiceControlState.actionButtons` 為 iOS 26.4 SDK 新 API（修正 §10 風險欄先前「9 處 gate 無新符號」的結論——有 2 處）。
+2. 新畫面漏 `import SFSafeSymbols`＋`.haPrimary` 省略基底寫法（5 錯單根因）。
+3. **公式型 bundle id 殘留**（`WKCompanionAppBundleIdentifier`＋6 entitlements 的 keychain-access-groups）——字面值掃描抓不到的第二形態；已雙掃歸零。
+4. **上游潛伏死鎖**：`AppConstants.AppGroupContainer` nil fallback 在 `AppEnvironment.init()` 重入 `Current`。規則：**模擬器測試不可帶 `CODE_SIGNING_ALLOWED=NO`**。可回報上游。
+
+### 未完成
+
+| 項目 | 卡點 |
+|---|---|
+| Phase 3：模擬器 E2E 打 prod（release 組態） | 進行中——release cloud build 已啟動；瀏覽器授權步驟需 Alan 的 PaaS 帳號 |
+| Fixture contract 測試啟用 | 等 Android Layer 2 錄製 PR（骨架已就位，disabled 註明原因） |
+| Phase 4：CI 雙 config matrix | 依 D1（remote repo 未定）之後 |
+| O1–O6 產品決策（§7） | 需 Alan／產品拍板 |
+| D10 帳號刪除 | 上架前必補 |
+| D1 remote repo | 四個 commit 僅存本機，儘早定 push 目的地 |
+
+## 11. 風險
 
 - 本機 Xcode：已裝 26.3（Build 17C529，iOS 26.2＋watchOS 26.2 SDK）；上游 main 的 9 處
   `#available(iOS 26.4)` 皆為行為閘門、無新 SDK 符號，26.3 靜態分析可編——以實編驗證為準（進行中）。
