@@ -1,0 +1,43 @@
+/* Fork-owned strings for the woowtech cloud onboarding flow (PRD Phase 2).
+   Traditional Chinese wording ported verbatim from the Android cloud edition screens. */
+
+/* Chooser */
+"woowtech.chooser.title" = "選擇連線方式";
+"woowtech.chooser.subtitle" = "請選擇您要如何使用連接 woowtech smarthome";
+"woowtech.chooser.local.title" = "連結本地設備";
+"woowtech.chooser.local.subtitle" = "連結架設好的 woowtech smarthome";
+"woowtech.chooser.cloud.title" = "使用雲端服務";
+"woowtech.chooser.cloud.subtitle" = "立即開通使用 woowtech smarthome";
+
+/* Sign in */
+"woowtech.signin.title" = "雲端登入";
+"woowtech.signin.preparing" = "正在準備驗證...";
+"woowtech.signin.instructions" = "請在瀏覽器中輸入以下驗證碼完成登入";
+"woowtech.signin.copy_code" = "複製驗證碼";
+"woowtech.signin.waiting" = "等待瀏覽器授權中...";
+"woowtech.signin.reconnecting" = "連線中斷，重新連線中…";
+"woowtech.signin.open_browser" = "前往驗證";
+"woowtech.signin.authorized" = "授權成功！正在前往開通...";
+"woowtech.signin.retry" = "重新開始";
+"woowtech.signin.error.request_failed" = "無法取得驗證碼";
+"woowtech.signin.error.connection" = "連線失敗: %@";
+
+/* Provision */
+"woowtech.provision.idle.title" = "開通雲端服務";
+"woowtech.provision.idle.body" = "點擊下方按鈕，為您開啟專屬的 Woow HA 伺服器";
+"woowtech.provision.start" = "開啟 Woow HA 服務";
+"woowtech.provision.provisioning" = "正在開通您的 Woow HA 服務...";
+"woowtech.provision.ready" = "開通完成！正在連線...";
+"woowtech.provision.reconnect" = "重新連線";
+"woowtech.provision.retry" = "重試";
+"woowtech.provision.back" = "返回";
+"woowtech.provision.suspended.title" = "服務已暫停";
+"woowtech.provision.suspended.body" = "您的 Woow HA 服務已被暫停，請聯繫支援";
+"woowtech.provision.deleting.title" = "前一個服務正在刪除中";
+"woowtech.provision.deleting.body" = "請稍後重新開通";
+"woowtech.provision.error.failed" = "開通失敗";
+"woowtech.provision.error.status_query_failed" = "查詢狀態失敗";
+"woowtech.provision.error.timeout" = "開通逾時（超過 10 分鐘），請重試或聯繫支援";
+"woowtech.provision.error.missing_url" = "伺服器回報就緒但未提供網址";
+"woowtech.provision.error.unexpected_status" = "未預期的狀態: %@";
+"woowtech.provision.error.abnormal_status" = "異常狀態：%@";

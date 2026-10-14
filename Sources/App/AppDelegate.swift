@@ -100,6 +100,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #else
         Current.tags = iOSTagManager()
         #endif
+
+        #if CLOUD_EDITION
+        // Fork hook 2 (PRD §3.2): once onboarding persisted a server, discard the WOOW PaaS
+        // device-flow session — it only existed to obtain the instance URL. The session is
+        // in-memory (D8), so clearing cannot fail; the closure stays non-throwing on purpose,
+        // as a throw here would roll the finished registration back.
+        Current.onServerRegistered = { _ in await WoowtechCloud.session.clear() }
+        #endif
         // swiftlint:enable prohibit_environment_assignment
 
         notificationManager.setupNotifications()

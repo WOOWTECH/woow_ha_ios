@@ -139,7 +139,7 @@ public struct RectangularProgressView: View {
                                 }
                             )
                             .position(
-                                x: min(max(width * clamped, thumbWidth / 2), width - thumbWidth / 2),
+                                x: min(max(width * CGFloat(clamped), thumbWidth / 2), width - thumbWidth / 2),
                                 y: Self.thumbHeight / 2
                             )
                     }

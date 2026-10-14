@@ -191,6 +191,20 @@ public class AppEnvironment {
     public var date: () -> Date = Date.init
     public var calendar: () -> Calendar = { Calendar.autoupdatingCurrent }
 
+    /// Fork hook (PRD §3.2): invoked by onboarding right after a server was persisted
+    /// (`servers.add`) and before the flow declares success with its `.complete` step.
+    ///
+    /// Nil by default and in the on-premise edition. The cloud edition assigns it at launch to
+    /// discard the WOOW PaaS device-flow session once the server it produced is registered —
+    /// the credentials only exist to obtain the instance URL during onboarding.
+    ///
+    /// Throwing rolls the registration back: the error propagates into the onboarding failure
+    /// path, which revokes the token and removes the just-added server. Implementations must
+    /// therefore only throw when keeping the registration would be wrong, and should swallow
+    /// best-effort cleanup failures. Long-running work is forbidden here: the surrounding
+    /// PromiseKit chain cannot cancel it.
+    public var onServerRegistered: ((Server) async throws -> Void)?
+
     /// Provides the Client Event store used for local logging.
     public var clientEventStore: ClientEventStoreProtocol = ClientEventStore()
 

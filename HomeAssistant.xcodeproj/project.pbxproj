@@ -1264,6 +1264,11 @@
 				Views/SafariWebView.swift,
 				Views/SearchingServersAnimationView.swift,
 				Views/ShareActivityView.swift,
+				Woowtech/CloudChooserView.swift,
+				Woowtech/CloudProvisionView.swift,
+				Woowtech/CloudSignInView.swift,
+				Woowtech/DeviceFlowViewModel.swift,
+				Woowtech/WoowtechStrings.swift,
 			);
 			target = D03D891620E0A85200D4F28D /* Shared-iOS */;
 		};
@@ -4671,7 +4676,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = io.robbie.HomeAssistant.dev.watchkitapp.WatchWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).$(WOOW_PRODUCT_BASE)$(BUNDLE_ID_SUFFIX).watchkitapp.WatchWidgets";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -4751,7 +4756,7 @@
 				MARKETING_VERSION = 2026.8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = io.robbie.HomeAssistant.watchkitapp.WatchWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).$(WOOW_PRODUCT_BASE)$(BUNDLE_ID_SUFFIX).watchkitapp.WatchWidgets";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -4828,7 +4833,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.robbie.HomeAssistant-WatchAppTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).$(WOOW_PRODUCT_BASE)-WatchAppTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -4897,7 +4902,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.robbie.HomeAssistant-WatchAppTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).$(WOOW_PRODUCT_BASE)-WatchAppTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;

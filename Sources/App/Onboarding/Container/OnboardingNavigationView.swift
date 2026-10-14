@@ -22,6 +22,41 @@ enum OnboardingNavigation {
             return nil
         }
     }
+
+    /// The screen at the root of the onboarding `NavigationStack`.
+    enum RootScreen {
+        /// The upstream welcome screen (on-premise initial/required onboarding).
+        case welcome
+        /// The cloud edition's local-vs-cloud chooser (cloud initial/required onboarding).
+        case cloudChooser
+        /// The servers list (secondary onboarding — adding a server — in both editions).
+        case serversList
+    }
+
+    /// Which screen the onboarding stack starts on for `style`.
+    ///
+    /// `isCloudEdition` is injectable so both branches stay testable from a single build; the default
+    /// is the running edition.
+    static func rootScreen(
+        for style: OnboardingStyle,
+        isCloudEdition: Bool = OnboardingNavigation.isCloudEdition
+    ) -> RootScreen {
+        switch style {
+        case .initial, .required:
+            return isCloudEdition ? .cloudChooser : .welcome
+        case .secondary:
+            return .serversList
+        }
+    }
+
+    /// Hook 1 (fork, PRD §1): the single place the onboarding entry point asks which edition runs.
+    static var isCloudEdition: Bool {
+        #if CLOUD_EDITION
+        return true
+        #else
+        return false
+        #endif
+    }
 }
 
 /// Hosts the onboarding screens in a `NavigationStack` whose path is owned by the
@@ -75,13 +110,24 @@ struct OnboardingNavigationView: View {
 
     @ViewBuilder
     private var root: some View {
-        switch onboardingStyle {
-        case .initial, .required:
-            OnboardingWelcomeView(continueAction: { presenter.push(.serversList) })
-        case .secondary:
+        switch OnboardingNavigation.rootScreen(for: onboardingStyle) {
+        case .welcome:
+            welcome
+        case .cloudChooser:
+            #if CLOUD_EDITION
+            CloudChooserView(presenter: presenter)
+            #else
+            // Unreachable: `rootScreen` only answers `.cloudChooser` when the cloud edition runs.
+            welcome
+            #endif
+        case .serversList:
             serversList
                 .navigationTitle(L10n.Settings.ConnectionSection.addServer)
         }
+    }
+
+    private var welcome: some View {
+        OnboardingWelcomeView(continueAction: { presenter.push(.serversList) })
     }
 
     @ViewBuilder
@@ -121,6 +167,14 @@ struct OnboardingNavigationView: View {
                 showSettingsEntry: false,
                 expandMoreDetails: true
             )
+        #if CLOUD_EDITION
+        case .welcome:
+            welcome
+        case let .cloudSignIn(viewModel):
+            CloudSignInView(viewModel: viewModel, presenter: presenter)
+        case let .cloudProvision(viewModel):
+            CloudProvisionView(viewModel: viewModel, presenter: presenter)
+        #endif
         }
     }
 
